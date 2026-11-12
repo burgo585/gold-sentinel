@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GOLD SENTINEL - Terminal Institucional de Ouro & Forex</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes pulse-soft {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.1); }
+    }
+    .live-dot {
+      animation: pulse-soft 2s ease-in-out infinite;
+    }
+    .flash-up {
+      animation: flash-green 0.5s ease-out;
+    }
+    .flash-down {
+      animation: flash-red 0.5s ease-out;
+    }
+    @keyframes flash-green {
+      0% { background-color: rgba(16, 185, 129, 0.25); color: #047857; }
+      100% { background-color: transparent; }
+    }
+    @keyframes flash-red {
+      0% { background-color: rgba(239, 68, 68, 0.25); color: #b91c1c; }
+      100% { background-color: transparent; }
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 6px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .tab-pill {
+      transition: all 0.2s ease;
+    }
+    .tab-pill.active {
+      background-color: #f59e0b;
+      color: #0f172a;
+      font-weight: 700;
+      box-shadow: 0 4px 12px -2px rgba(245, 158, 11, 0.35);
+      border-color: #f59e0b;
+    }
+  </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 min-h-screen font-sans antialiased selection:bg-amber-400 selection:text-slate-950 flex flex-col justify-between">
+
+  <!-- CABEÇALHO CLARO, NÍTIDO E PROFISSIONAL -->
+  <header class="border-b border-slate-200 bg-white/95 backdrop-blur sticky top-0 z-50 shadow-xs">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 py-3.5 flex flex-wrap items-center justify-between gap-5">
+      
+      <!-- Marca & Identidade -->
+      <div class="flex items-center gap-3.5">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-md shadow-amber-500/20 font-black text-slate-950 text-xl tracking-tighter">
+          Au
+        </div>
+        <div>
+          <div class="flex items-center gap-2.5">
+            <h1 class="font-extrabold text-lg tracking-tight text-slate-900">GOLD SENTINEL</h1>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
+              <span id="conn-status">MT5 GOLD# • CONECTADO</span>
+            </span>
+          </div>
+          <p class="text-xs text-slate-500">Terminal de Análise do Ouro (XAUUSD) • 3 Módulos Integrados • Tema Claro</p>
+        </div>
+      </div>
+
+      <!-- Quick Ticker no Topo -->
+      <div class="flex items-center gap-3 font-mono bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-1.5 shadow-inner">
+        <span class="text-xs text-slate-500 font-sans">Spot XAUUSD:</span>
+        <span id="header-price" class="text-sm font-black text-slate-900">$3935.71</span>
+        <span id="header-change" class="text-xs font-bold text-rose-600">-1.34%</span>
+      </div>
+
+      <!-- Relógios Mundiais -->
+      <div class="flex items-center gap-4 text-xs font-mono bg-slate-50 border border-slate-200 rounded-xl px-4 py-1.5 shadow-inner text-slate-600">
+        <div><span class="text-slate-400 font-sans">BSB:</span> <span id="clock-brt" class="text-slate-800 font-bold ml-1">--:--:--</span></div>
+        <div class="h-4 w-px bg-slate-200"></div>
+        <div><span class="text-slate-400 font-sans">NY:</span> <span id="clock-ny" class="text-slate-800 font-bold ml-1">--:--:--</span></div>
+        <div class="h-4 w-px bg-slate-200"></div>
+        <div><span class="text-slate-400 font-sans">LON:</span> <span id="clock-lon" class="text-slate-800 font-bold ml-1">--:--:--</span></div>
+      </div>
+
+    </div>
+
+    <!-- 3 ABAS SIMPLES E OBJETIVAS (GRÁFICO EM ÚLTIMO) -->
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 pt-2.5 pb-2.5 flex gap-3 overflow-x-auto no-scrollbar border-t border-slate-100">
+      
+      <!-- ABA 1: VISÃO GERAL, SESSÕES DE SOBREPOSIÇÕES E PROJEÇÕES UNIFICADAS -->
+      <button onclick="setTab('market')" id="tab-market" class="tab-pill active px-5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 flex items-center gap-2 whitespace-nowrap shadow-xs">
+        <span class="text-base">📊</span> Visão Geral, Sessões & Projeções
+      </button>
+
+      <!-- ABA 2: TUDO DE NOTÍCIAS & CALENDÁRIO FOREX -->
+      <button onclick="setTab('news')" id="tab-news" class="tab-pill px-5 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 flex items-center gap-2 whitespace-nowrap">
+        <span class="text-base">📰</span> Notícias & Calendário Forex (1, 2 e 3 Touros)
+      </button>
+
+      <!-- ABA 3: TERMINAL DE OPERAÇÕES & GRÁFICO TRADINGVIEW (EM ÚLTIMO) -->
+      <button onclick="setTab('chart')" id="tab-chart" class="tab-pill px-5 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 flex items-center gap-2 whitespace-nowrap">
+        <span class="text-base">📈</span> Terminal de Operações & Gráfico
+      </button>
+
+    </div>
+  </header>
+
+  <!-- CONTEÚDO PRINCIPAL (3 MÓDULOS INTEGRADOS) -->
+  <main class="max-w-7xl mx-auto px-6 lg:px-10 py-7 flex-1 w-full space-y-7">
+
+    <!-- ================================================================= -->
+    <!-- MÓDULO 1: MERCADO, PREÇO, SESSÕES 24H & PROJEÇÕES (UNIFICADO)    -->
+    <!-- ================================================================= -->
+    <div id="view-market" class="tab-content space-y-7">
+      
+      <!-- 1. FAIXA DE COTAÇÃO & RANGE -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Preço Spot Ao Vivo -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
+              <span>Cotação Spot (XAUUSD / GOLD#)</span>
+              <span id="gold-source" class="font-mono text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">MT5 Conectado</span>
+            </div>
+            <div class="mt-3 flex items-baseline gap-3">
+              <div id="gold-price-box" class="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight text-slate-900 transition-all duration-300">
+                $<span id="gold-price">3935.71</span>
+              </div>
+              <div id="gold-change-badge" class="px-2.5 py-1 rounded-lg text-xs font-bold font-mono bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1">
+                <span id="gold-change-arrow">▼</span>
+                <span id="gold-change">-1.34%</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between text-xs text-slate-500 font-mono">
+            <span>Abertura: $<span id="gold-open" class="text-slate-800 font-semibold">3989.10</span></span>
+            <span>Spread: <span id="gold-spread" class="text-slate-800 font-bold">2.4</span> pips</span>
+          </div>
+        </div>
+
+        <!-- Faixa do Dia & ADR -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-xs text-slate-500 font-medium">
+              <span>Faixa de Preço do Dia</span>
+              <span class="text-xs font-mono text-amber-700 font-bold">ADR: $<span id="gold-range">76.07</span></span>
+            </div>
+            <div class="mt-4">
+              <div class="flex justify-between text-xs font-mono text-slate-600 mb-2">
+                <span>Mín: $<span id="gold-low">3924.46</span></span>
+                <span>Máx: $<span id="gold-high">4000.53</span></span>
+              </div>
+              <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden p-0.5 border border-slate-200/60">
+                <div id="range-fill" class="bg-gradient-to-r from-rose-500 via-amber-400 to-emerald-500 h-full rounded-full w-[25%] transition-all duration-500"></div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-500">
+            Oscilação dentro do limite médio diário de 20 períodos.
+          </div>
+        </div>
+
+        <!-- Distância para Níveis Críticos -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="text-xs text-slate-500 font-medium">Distância para Níveis Técnicos</div>
+            <div class="mt-3 space-y-1.5 text-xs font-mono">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-500">Resistência (R1):</span>
+                <span class="text-emerald-700 font-bold">+$<span id="dist-r1">71.42</span></span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-500">Pivô Central (PP):</span>
+                <span class="text-amber-700 font-bold">$3954.19</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-500">Suporte (S1):</span>
+                <span class="text-rose-700 font-bold">-$<span id="dist-s1">49.28</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between text-xs text-slate-500">
+            <span>Status: <strong class="text-rose-600">Abaixo do Pivô (Viés Vendedor)</strong></span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2. SESSÕES MUNDIAIS & SOBREPOSIÇÕES (INTEGRADO DIRETAMENTE AQUI) -->
+      <div class="bg-white border border-slate-200/90 rounded-2xl p-7 shadow-sm space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="font-bold text-slate-900 text-base flex items-center gap-2">
+              <span class="text-amber-600">🌐</span> Horários das Bolsas & Sobreposições do Dia (Fuso de Brasília)
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Acompanhamento contínuo dos períodos de maior fluxo de capital e liquidez institucional no Ouro</p>
+          </div>
+          <span class="text-xs font-mono text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-2 font-bold">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
+            <span id="active-session-text">SESSÃO ATUAL: LONDRES (EUROPA)</span>
+          </span>
+        </div>
+
+        <!-- Régua das 24 Horas -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+          <div class="flex justify-between items-center text-xs font-mono font-bold text-slate-700">
+            <span>LINHA DO TEMPO DAS 24H (HORÁRIO DE BRASÍLIA)</span>
+            <span class="text-amber-600">Sessões & Volumes Ativos</span>
+          </div>
+
+          <div class="relative w-full bg-white h-11 rounded-xl overflow-hidden border border-slate-200 flex text-xs font-mono font-bold shadow-inner">
+            <div class="w-[20%] bg-slate-100 text-slate-600 flex items-center justify-center border-r border-slate-200" title="Ásia (Tóquio) 00h-05h BRT">
+              Ásia (00h-05h)
+            </div>
+            <div class="w-[23%] bg-sky-50 text-sky-800 flex items-center justify-center border-r border-slate-200" title="Londres 05h-10:30h BRT">
+              Londres (05h-10:30h)
+            </div>
+            <div class="w-[15%] bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black flex items-center justify-center shadow-md animate-pulse border-r border-slate-200" title="OVERLAP LONDRES + NOVA YORK (10:30h - 14:00h BRT)">
+              🔥 OVERLAP LON+NY
+            </div>
+            <div class="w-[13%] bg-amber-50 text-amber-900 flex items-center justify-center border-r border-slate-200" title="Nova York Fechamento 14h-17h BRT">
+              NY (14h-17h)
+            </div>
+            <div class="w-[29%] bg-slate-100 text-slate-500 flex items-center justify-center" title="Sydney / Pacífica 18h-03h BRT">
+              Sydney (18h-03h)
+            </div>
+          </div>
+
+          <div class="flex justify-between text-[11px] font-mono text-slate-500 pt-0.5">
+            <span>00:00</span>
+            <span>05:00 (Londres)</span>
+            <span class="text-amber-700 font-bold">10:30 (NY Abre / Início Overlap)</span>
+            <span class="text-amber-700 font-bold">14:00 (Londres Fecha)</span>
+            <span>17:00 (NY Fecha)</span>
+            <span>23:59</span>
+          </div>
+        </div>
+
+        <!-- As 3 Sobreposições em Cards Leves -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-1.5">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-xs text-sky-700">1. Sydney + Tóquio</span>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-white text-slate-600 font-mono border border-slate-200">20:00 às 03:00 BRT</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              <strong>Volatilidade Baixa/Média:</strong> Movimentação em canais e consolidação da madrugada.
+            </p>
+          </div>
+
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-1.5">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-xs text-amber-700">2. Tóquio + Abertura Europeia</span>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-white text-slate-600 font-mono border border-slate-200">04:00 às 05:00 BRT</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              <strong>Volatilidade Média:</strong> Bancos de Frankfurt e Londres capturam liquidez rompendo máximas e mínimas.
+            </p>
+          </div>
+
+          <div class="bg-amber-50/70 border-2 border-amber-400 rounded-xl p-4 space-y-1.5 shadow-xs">
+            <div class="flex justify-between items-center">
+              <span class="font-black text-xs text-amber-900 flex items-center gap-1.5">
+                <span>🔥</span> 3. Londres + Nova York (Golden Overlap)
+              </span>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-black font-mono">10:30 às 14:00 BRT</span>
+            </div>
+            <p class="text-xs text-amber-950 leading-relaxed font-semibold">
+              <strong>Volatilidade Máxima (~70% do Volume):</strong> Momento de ouro para operações institucionais no XAUUSD.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. PONTOS DE PIVÔ INSTITUCIONAIS -->
+      <div class="bg-white border border-slate-200/90 rounded-2xl p-7 shadow-sm space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="font-bold text-slate-900 text-base flex items-center gap-2">
+              <span class="text-amber-600">⚖️</span> Suportes, Resistências & Pontos de Pivô
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Níveis de reação calculados sobre as velas M5 reais do MetaTrader 5</p>
+          </div>
+          <div class="flex gap-2">
+            <button id="btn-pivot-classic" onclick="switchPivot('classic')" class="px-3.5 py-1.5 text-xs rounded-xl bg-amber-500 text-slate-950 font-bold transition shadow-xs">Clássico</button>
+            <button id="btn-pivot-fib" onclick="switchPivot('fib')" class="px-3.5 py-1.5 text-xs rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition">Fibonacci</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-4 text-center font-mono">
+          <div class="bg-rose-50/70 border border-rose-200 rounded-xl p-4">
+            <div class="text-xs text-rose-700 font-bold">Suporte 3</div>
+            <div id="val-s3" class="text-sm font-bold text-rose-800 mt-1.5">$3772.32</div>
+            <div class="text-[11px] text-slate-400 mt-1">Reversão Total</div>
+          </div>
+          <div class="bg-rose-50/50 border border-rose-200/80 rounded-xl p-4">
+            <div class="text-xs text-rose-700 font-bold">Suporte 2</div>
+            <div id="val-s2" class="text-sm font-bold text-rose-800 mt-1.5">$3848.39</div>
+            <div class="text-[11px] text-slate-400 mt-1">Zona Compradora</div>
+          </div>
+          <div class="bg-rose-50/30 border border-rose-200/60 rounded-xl p-4">
+            <div class="text-xs text-rose-600 font-bold">Suporte 1</div>
+            <div id="val-s1" class="text-sm font-bold text-rose-700 mt-1.5">$3886.43</div>
+            <div class="text-[11px] text-slate-400 mt-1">Primeiro Teste</div>
+          </div>
+          <div class="bg-amber-50 border-2 border-amber-400 rounded-xl p-4 shadow-sm">
+            <div class="text-xs text-amber-800 font-black">PIVÔ CENTRAL</div>
+            <div id="val-pp" class="text-base font-black text-amber-900 mt-1">$3954.19</div>
+            <div class="text-[11px] text-amber-700 mt-1 font-semibold">Divisor Bull/Bear</div>
+          </div>
+          <div class="bg-emerald-50/30 border border-emerald-200/60 rounded-xl p-4">
+            <div class="text-xs text-emerald-600 font-bold">Resistência 1</div>
+            <div id="val-r1" class="text-sm font-bold text-emerald-700 mt-1.5">$4007.13</div>
+            <div class="text-[11px] text-slate-400 mt-1">Primeiro Alvo</div>
+          </div>
+          <div class="bg-emerald-50/50 border border-emerald-200/80 rounded-xl p-4">
+            <div class="text-xs text-emerald-700 font-bold">Resistência 2</div>
+            <div id="val-r2" class="text-sm font-bold text-emerald-800 mt-1.5">$4045.26</div>
+            <div class="text-[11px] text-slate-400 mt-1">Zona Vendedora</div>
+          </div>
+          <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4">
+            <div class="text-xs text-emerald-700 font-bold">Resistência 3</div>
+            <div id="val-r3" class="text-sm font-bold text-emerald-800 mt-1.5">$4121.33</div>
+            <div class="text-[11px] text-slate-400 mt-1">Exaustão Máxima</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. PROJEÇÕES MATEMÁTICAS & METODOLOGIA (INTEGRADO DIRETAMENTE AQUI) -->
+      <div class="bg-white border border-slate-200/90 rounded-2xl p-7 shadow-sm space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="font-bold text-slate-900 text-base flex items-center gap-2">
+              <span class="text-amber-600">🎯</span> Projeções Estruturadas do Ouro (Dia, Semana & Mês)
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Calculadas por ADR de 20 períodos, volatilidade estatística e ciclo macro do Fed</p>
+          </div>
+          <span class="text-xs font-mono text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200 font-bold">Metodologia Auditada</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Dia -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-sky-800 uppercase tracking-wider">🎯 Projeção do Dia</span>
+              <span id="proj-day-bias" class="text-xs px-2.5 py-0.5 rounded-lg font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200">Baixa (Intraday)</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex justify-between text-slate-700">
+                <span>Alvo Comprador (Exaustão):</span>
+                <span class="text-emerald-700 font-bold">$<span id="proj-day-bull">4000.53</span></span>
+              </div>
+              <div class="flex justify-between text-slate-700">
+                <span>Alvo Vendedor (Suporte):</span>
+                <span class="text-rose-700 font-bold">$<span id="proj-day-bear">3924.46</span></span>
+              </div>
+              <div class="flex justify-between text-slate-500 pt-2 border-t border-slate-200">
+                <span>ADR de 20 Períodos:</span>
+                <span class="text-amber-800 font-bold">$<span id="proj-day-adr">76.07</span></span>
+              </div>
+            </div>
+            <p id="proj-day-desc" class="text-xs text-slate-500 pt-1 leading-relaxed">
+              Oscilação intradiária dentro do canal de volatilidade diário do MT5.
+            </p>
+          </div>
+
+          <!-- Semana -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-violet-800 uppercase tracking-wider">📅 Projeção da Semana</span>
+              <span class="text-xs px-2.5 py-0.5 rounded-lg font-mono font-bold bg-amber-50 text-amber-800 border border-amber-200">Consolidação</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex justify-between text-slate-700">
+                <span>Teto Semanal (Resistência):</span>
+                <span class="text-emerald-700 font-bold">$<span id="proj-week-res">4127.76</span></span>
+              </div>
+              <div class="flex justify-between text-slate-700">
+                <span>Piso Semanal (Suporte):</span>
+                <span class="text-rose-700 font-bold">$<span id="proj-week-sup">3747.42</span></span>
+              </div>
+              <div class="flex justify-between text-slate-500 pt-2 border-t border-slate-200">
+                <span>Faixa Semanal Estimada:</span>
+                <span class="text-violet-700 font-bold">±$190.18</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-500 pt-1 leading-relaxed">
+              Guiada pelos pronunciamentos de Jerome Powell e dados de inflação dos EUA.
+            </p>
+          </div>
+
+          <!-- Mês -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-amber-800 uppercase tracking-wider">🏛️ Projeção do Mês</span>
+              <span class="text-xs px-2.5 py-0.5 rounded-lg font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">Alta Estrutural</span>
+            </div>
+            <div class="space-y-2 text-xs font-mono">
+              <div class="flex justify-between text-slate-700">
+                <span>Resistência Macro:</span>
+                <span class="text-emerald-700 font-bold">$4317.94</span>
+              </div>
+              <div class="flex justify-between text-slate-700">
+                <span>Suporte Macro:</span>
+                <span class="text-rose-700 font-bold">$3557.24</span>
+              </div>
+              <div class="flex justify-between text-slate-500 pt-2 border-t border-slate-200">
+                <span>Drivers Principais:</span>
+                <span class="text-amber-800 font-bold">Bancos Centrais + Juros</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-500 pt-1 leading-relaxed">
+              Compras físicas de ouro pelo Banco da China (PBoC) e ciclo global de desdolarização.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MÓDULO 2: NOTÍCIAS & CALENDÁRIO FOREX (1, 2 E 3 TOUROS)          -->
+    <!-- ================================================================= -->
+    <div id="view-news" class="tab-content hidden space-y-7">
+      
+      <!-- Card Alerta do Próximo Catalisador 3 Touros -->
+      <div class="bg-amber-50/80 border-2 border-amber-300 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
+              <span>🐂🐂🐂</span> Próximo Evento de 3 Touros
+            </span>
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+          </div>
+          <div id="next-event-title" class="text-sm font-bold text-slate-900">
+            USD: Índice de Preços ao Consumidor (CPI / Inflação) m/m
+          </div>
+          <div class="text-xs text-amber-900/90 font-medium">
+            Notícia de volatilidade crítica: dita a tendência dos próximos $50 a $100 no Ouro.
+          </div>
+        </div>
+        <div class="bg-white px-5 py-3 rounded-xl border border-amber-200 text-center shadow-xs">
+          <div class="text-[11px] text-amber-800 font-semibold uppercase">Contagem Regressiva:</div>
+          <div id="countdown-timer" class="text-2xl font-black font-mono text-amber-900 mt-0.5">
+            --h --m --s
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid Duplo: Calendário de Touros à Esquerda + Feed das 10 Maiores Fontes à Direita -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-7">
+
+        <!-- Calendário Econômico -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm space-y-5 flex flex-col justify-between">
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                  <span>📅</span> Calendário Forex da Semana
+                </h3>
+                <p class="text-xs text-slate-500">Filtrado por relevância e impacto no ouro</p>
+              </div>
+
+              <div class="flex items-center gap-1.5 text-xs font-mono">
+                <button onclick="filterCalendar('all')" id="btn-filter-all" class="px-3 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold shadow-xs">Todos</button>
+                <button onclick="filterCalendar(3)" id="btn-filter-3" class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100">🐂🐂🐂 (3)</button>
+                <button onclick="filterCalendar(2)" id="btn-filter-2" class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100">🐂🐂 (2)</button>
+                <button onclick="filterCalendar(1)" id="btn-filter-1" class="px-2.5 py-1 rounded-lg bg-yellow-50 text-yellow-800 border border-yellow-200 hover:bg-yellow-100">🐂 (1)</button>
+              </div>
+            </div>
+
+            <div class="overflow-y-auto max-h-[580px] space-y-3 pt-3 pr-1" id="calendar-list">
+              <!-- Renderizado dinamicamente -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Feed dos 10 Maiores Portais -->
+        <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm space-y-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                  <span>📰</span> Feed dos 10 Maiores Portais Mundiais
+                </h3>
+                <p class="text-xs text-slate-500">Bloomberg • Reuters • Investing • MarketWatch • FXStreet</p>
+              </div>
+              <button onclick="fetchData()" class="px-3 py-1 text-xs text-slate-700 hover:text-slate-900 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 transition flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <span>Atualizar</span>
+              </button>
+            </div>
+
+            <div class="overflow-y-auto max-h-[580px] space-y-3 pt-3 pr-1" id="news-list">
+              <!-- Renderizado dinamicamente -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MÓDULO 3: TERMINAL DE OPERAÇÕES & GRÁFICO TRADINGVIEW (ÚLTIMO)   -->
+    <!-- ================================================================= -->
+    <div id="view-chart" class="tab-content hidden space-y-6">
+
+      <!-- BARRA DE STATUS DA CONTA DA CORRETORA (XM / MT5) -->
+      <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="flex flex-wrap items-center gap-4">
+          <div class="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-300 flex items-center justify-center text-amber-700 text-lg font-black font-mono shadow-xs">
+            XM
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm text-slate-900" id="acc-broker-name">XM Global Limited</span>
+              <span class="font-mono text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200" id="acc-server-name">XMGlobal-MT5 4</span>
+              <span class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 font-bold" id="acc-status-badge">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
+                <span>Conectado MT5</span>
+              </span>
+            </div>
+            <div class="text-xs text-slate-500 font-mono mt-0.5">
+              Conta: <strong class="text-slate-800" id="acc-login-id">89119725</strong> • Alavancagem: <span id="acc-leverage">1:500</span> • Moeda: USD • Tipo: <span class="text-emerald-700 font-bold">Standard Real</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Métricas Rápidas de Saldo e P&L da Corretora -->
+        <div class="flex items-center gap-5 sm:gap-7 flex-wrap">
+          <div class="text-right font-mono">
+            <div class="text-[11px] text-slate-400">Saldo (Balance)</div>
+            <div class="text-base font-black text-slate-900" id="acc-balance-display">$76.01</div>
+          </div>
+          <div class="text-right font-mono">
+            <div class="text-[11px] text-slate-400">Patrimônio (Equity)</div>
+            <div class="text-base font-black text-emerald-700" id="acc-equity-display">$76.01</div>
+          </div>
+          <div class="text-right font-mono">
+            <div class="text-[11px] text-slate-400">P&L Flutuante</div>
+            <div class="text-base font-bold text-slate-600" id="acc-floating-pnl">$0.00</div>
+          </div>
+
+          <button onclick="openBrokerModal()" class="px-4 py-2 text-xs rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold border border-slate-200 transition flex items-center gap-1.5 shadow-xs">
+            <span>🔑</span> Conectar / Alterar Conta
+          </button>
+        </div>
+      </div>
+
+      <!-- GRID PRINCIPAL: BOLETA DE NEGOCIAÇÃO (ESQUERDA) + GRÁFICO TRADINGVIEW (DIREITA) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- BOLETA DE EXECUÇÃO DE ORDENS & POSIÇÕES ABERTAS (4 COLUNAS) -->
+        <div class="lg:col-span-4 space-y-5">
+          
+          <!-- BOLETA DE ENTRADA E SAÍDA -->
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-amber-600 font-bold">⚡</span>
+                <h3 class="font-bold text-slate-900 text-sm">Boleta de Negociação (XAUUSD)</h3>
+              </div>
+              <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold">GOLD# MT5</span>
+            </div>
+
+            <!-- Tipo de Ordem -->
+            <div class="grid grid-cols-2 gap-2 text-xs font-bold">
+              <button type="button" id="btn-ordertype-market" onclick="setOrderType('market')" class="py-2 rounded-xl bg-amber-500 text-slate-950 shadow-xs">A Mercado</button>
+              <button type="button" id="btn-ordertype-limit" onclick="setOrderType('limit')" class="py-2 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200">Ordem Pendente</button>
+            </div>
+
+            <!-- Seletor de Lote / Volume -->
+            <div>
+              <div class="flex justify-between items-center text-xs text-slate-600 mb-1.5 font-medium">
+                <span>Volume de Negociação (Lotes):</span>
+                <span class="text-[11px] text-slate-400 font-mono">1 lote = 100 oz</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="adjustLot(-0.01)" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-lg flex items-center justify-center">-</button>
+                <input type="number" id="trade-lots" value="0.01" step="0.01" min="0.01" max="10" class="w-full h-10 text-center font-mono font-bold text-slate-900 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500">
+                <button type="button" onclick="adjustLot(0.01)" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-lg flex items-center justify-center">+</button>
+              </div>
+              <div class="grid grid-cols-4 gap-1.5 mt-2 text-xs font-mono">
+                <button type="button" onclick="setLot(0.01)" class="py-1 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold">0.01</button>
+                <button type="button" onclick="setLot(0.02)" class="py-1 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold">0.02</button>
+                <button type="button" onclick="setLot(0.05)" class="py-1 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold">0.05</button>
+                <button type="button" onclick="setLot(0.10)" class="py-1 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold">0.10</button>
+              </div>
+            </div>
+
+            <!-- Botões Rápidos de Venda (SELL @ Bid) e Compra (BUY @ Ask) -->
+            <div class="grid grid-cols-2 gap-3 pt-1">
+              <button type="button" onclick="executeTrade('SELL')" class="group p-3 rounded-xl bg-rose-50 hover:bg-rose-100 border-2 border-rose-400 text-left transition flex flex-col justify-between shadow-xs">
+                <div class="flex justify-between items-center text-xs font-black text-rose-800">
+                  <span>VENDA (SELL)</span>
+                  <span class="text-[10px] bg-rose-200/80 px-1.5 py-0.5 rounded font-mono">Bid</span>
+                </div>
+                <div class="text-lg font-black font-mono text-rose-900 mt-1">
+                  $<span id="ticket-bid">3924.10</span>
+                </div>
+              </button>
+
+              <button type="button" onclick="executeTrade('BUY')" class="group p-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-400 text-left transition flex flex-col justify-between shadow-xs">
+                <div class="flex justify-between items-center text-xs font-black text-emerald-800">
+                  <span>COMPRA (BUY)</span>
+                  <span class="text-[10px] bg-emerald-200/80 px-1.5 py-0.5 rounded font-mono">Ask</span>
+                </div>
+                <div class="text-lg font-black font-mono text-emerald-900 mt-1">
+                  $<span id="ticket-ask">3924.34</span>
+                </div>
+              </button>
+            </div>
+
+            <!-- Stop Loss & Take Profit com Níveis Técnicos de 1 Clique -->
+            <div class="space-y-3 pt-2 border-t border-slate-100">
+              <div>
+                <div class="flex justify-between items-center text-xs text-slate-600 mb-1">
+                  <span class="font-semibold text-rose-700 flex items-center gap-1"><span>🛑</span> Stop Loss (SL):</span>
+                  <div class="flex gap-1">
+                    <button type="button" onclick="setSLtoPivot('S1')" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 font-mono text-slate-700 border border-slate-200">S1 ($3886)</button>
+                    <button type="button" onclick="setSLtoPivot('PP')" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 font-mono text-slate-700 border border-slate-200">Pivô</button>
+                  </div>
+                </div>
+                <input type="number" id="trade-sl" placeholder="Ex: 3886.43" step="0.1" class="w-full h-9 px-3 font-mono text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-rose-400">
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center text-xs text-slate-600 mb-1">
+                  <span class="font-semibold text-emerald-700 flex items-center gap-1"><span>🎯</span> Take Profit (TP):</span>
+                  <div class="flex gap-1">
+                    <button type="button" onclick="setTPtoPivot('R1')" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 font-mono text-slate-700 border border-slate-200">R1 ($4007)</button>
+                    <button type="button" onclick="setTPtoPivot('R2')" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 font-mono text-slate-700 border border-slate-200">R2</button>
+                  </div>
+                </div>
+                <input type="number" id="trade-tp" placeholder="Ex: 4007.13" step="0.1" class="w-full h-9 px-3 font-mono text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-400">
+              </div>
+            </div>
+
+            <!-- Feedback de Execução de Ordem -->
+            <div id="trade-toast" class="hidden p-3 rounded-xl text-xs font-mono transition-all"></div>
+
+          </div>
+
+          <!-- TABELA DE POSIÇÕES ABERTAS (HISTÓRICO AO VIVO) -->
+          <div class="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="text-amber-600 font-bold">📑</span>
+                <h4 class="font-bold text-xs text-slate-900">Posições Abertas (<span id="open-trades-count">0</span>)</h4>
+              </div>
+              <span class="text-[11px] font-mono text-slate-500">P&L em Tempo Real</span>
+            </div>
+
+            <div class="overflow-y-auto max-h-[220px] space-y-2 pr-1" id="open-positions-list">
+              <div class="text-center py-6 text-slate-400 text-xs">
+                Nenhuma ordem aberta no momento.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- GRÁFICO TRADINGVIEW (8 COLUNAS) -->
+        <div class="lg:col-span-8 bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm space-y-3 flex flex-col justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <span>📈</span> Gráfico TradingView Oficial • XAUUSD (Spot Ouro)
+              </h3>
+              <p class="text-xs text-slate-500">Utilize as ferramentas gráficas e trace suas entradas e saídas diretamente na tela</p>
+            </div>
+            <div class="flex items-center gap-2 text-xs font-mono text-slate-600 bg-slate-50 px-3 py-1 rounded-xl border border-slate-200">
+              <span>Timeframe: <strong>M15</strong></span>
+              <span class="text-slate-300">•</span>
+              <span>Tema: <strong>Claro</strong></span>
+            </div>
+          </div>
+
+          <div class="w-full h-[640px] rounded-xl overflow-hidden border border-slate-200 shadow-inner">
+            <iframe 
+              src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_gold_full&symbol=OANDA%3AXAUUSD&interval=15&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=ffffff&theme=light&style=1&timezone=America%2FSao_Paulo&locale=br" 
+              class="w-full h-full border-0" 
+              allowtransparency="true" 
+              scrolling="no">
+            </iframe>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- RODAPÉ CLARO E DISCRETO -->
+  <footer class="border-t border-slate-200 bg-white py-4 mt-8">
+    <div class="max-w-7xl mx-auto px-6 lg:px-10 text-center text-xs text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div>Gold Sentinel Engine • MetaTrader 5 (GOLD#) + Binance Spot WebSocket + TradingView</div>
+      <div>3 Abas Integradas • Design Claro e Intuitivo</div>
+    </div>
+  </footer>
+
+  <script>
+    let globalData = null;
+    let currentPivotType = 'classic';
+    let currentFilterBulls = 'all';
+    let lastPrice = 3935.71;
+
+    // Gerenciador das 3 Abas Principais
+    function setTab(tabId) {
+      const tabs = ['market', 'chart', 'news'];
+      tabs.forEach(t => {
+        const view = document.getElementById('view-' + t);
+        const btn = document.getElementById('tab-' + t);
+        if (t === tabId) {
+          view.classList.remove('hidden');
+          btn.className = "tab-pill active px-5 py-2 rounded-xl text-xs font-bold text-slate-950 bg-amber-500 flex items-center gap-2 whitespace-nowrap shadow-md";
+        } else {
+          view.classList.add('hidden');
+          btn.className = "tab-pill px-5 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 flex items-center gap-2 whitespace-nowrap";
+        }
+      });
+    }
+
+    function updateClocksAndSessions() {
+      const now = new Date();
+      document.getElementById('clock-brt').innerText = now.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+      document.getElementById('clock-ny').innerText = now.toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour12: false });
+      document.getElementById('clock-lon').innerText = now.toLocaleTimeString('en-GB', { timeZone: 'Europe/London', hour12: false });
+
+      const bsbHours = now.getHours() + (now.getMinutes() / 60);
+
+      const isLondonOpen = (bsbHours >= 5 && bsbHours < 14);
+      const isNYOpen = (bsbHours >= 10.5 && bsbHours < 17);
+      const isNYPre = (bsbHours >= 9 && bsbHours < 10.5);
+      const isTokyoOpen = (bsbHours >= 20 || bsbHours < 5);
+      const isSydneyOpen = (bsbHours >= 18 || bsbHours < 3);
+
+      const isOverlap = isLondonOpen && isNYOpen;
+
+      const activeText = document.getElementById('active-session-text');
+      if (activeText) {
+        if (isOverlap) {
+          activeText.innerText = "🔥 SOBREPOSIÇÃO LONDRES + NOVA YORK ABERTA (VOLUME MÁXIMO)";
+          activeText.className = "text-xs font-mono text-amber-900 bg-amber-100 px-3 py-1.5 rounded-xl border border-amber-300 font-black animate-pulse flex items-center gap-2";
+        } else if (isLondonOpen) {
+          activeText.innerText = "SESSÃO ATUAL: LONDRES (EUROPA) • PREPARANDO ABERTURA NY";
+        } else if (isNYOpen) {
+          activeText.innerText = "SESSÃO ATUAL: NOVA YORK (WALL STREET / COMEX)";
+        } else if (isTokyoOpen) {
+          activeText.innerText = "SESSÃO ATUAL: TÓQUIO (ÁSIA)";
+        } else {
+          activeText.innerText = "SESSÃO ATUAL: SYDNEY / PACÍFICA";
+        }
+      }
+    }
+
+    setInterval(updateClocksAndSessions, 1000);
+    updateClocksAndSessions();
+
+    function connectBinanceWS() {
+      try {
+        const ws = new WebSocket('wss://stream.binance.com:9443/ws/paxgusdt@ticker');
+        ws.onmessage = (event) => {
+          const msg = JSON.parse(event.data);
+          if (msg && msg.c) {
+            const current = parseFloat(msg.c);
+            const high = parseFloat(msg.h);
+            const low = parseFloat(msg.l);
+            const open = parseFloat(msg.o);
+            const chg = parseFloat(msg.P);
+            updateLivePriceDisplay(current, high, low, open, chg, "Binance PAXGUSDT (Ao Vivo)");
+          }
+        };
+        ws.onerror = (e) => console.log('WS error:', e);
+        ws.onclose = () => setTimeout(connectBinanceWS, 5000);
+      } catch (err) {
+        console.log("WebSocket exception:", err);
+      }
+    }
+
+    function updateLivePriceDisplay(current, high, low, open, chg, source) {
+      const priceEl = document.getElementById('gold-price');
+      const boxEl = document.getElementById('gold-price-box');
+      const chgBadge = document.getElementById('gold-change-badge');
+      const chgEl = document.getElementById('gold-change');
+      const arrowEl = document.getElementById('gold-change-arrow');
+      const sourceEl = document.getElementById('gold-source');
+
+      const hPrice = document.getElementById('header-price');
+      const hChange = document.getElementById('header-change');
+      if (hPrice) hPrice.innerText = '$' + current.toFixed(2);
+      if (hChange) {
+        hChange.innerText = (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%';
+        hChange.className = chg >= 0 ? 'text-xs font-bold text-emerald-700' : 'text-xs font-bold text-rose-600';
+      }
+
+      if (sourceEl && source) sourceEl.innerText = source;
+
+      if (current > lastPrice) {
+        boxEl.classList.remove('flash-down');
+        boxEl.classList.add('flash-up');
+      } else if (current < lastPrice) {
+        boxEl.classList.remove('flash-up');
+        boxEl.classList.add('flash-down');
+      }
+      setTimeout(() => {
+        boxEl.classList.remove('flash-up', 'flash-down');
+      }, 500);
+
+      lastPrice = current;
+      priceEl.innerText = current.toFixed(2);
+
+      // Atualiza boleta de ordens ao vivo
+      const bidEl = document.getElementById("ticket-bid");
+      const askEl = document.getElementById("ticket-ask");
+      const currentBid = current;
+      const currentAsk = current + 0.24;
+      if (bidEl) bidEl.innerText = currentBid.toFixed(2);
+      if (askEl) askEl.innerText = currentAsk.toFixed(2);
+
+      // Atualiza P&L de trades em andamento
+      openTrades.forEach(t => {
+        if (t.direction === "BUY") {
+          t.currentPrice = currentBid;
+          t.profit = (currentBid - t.openPrice) * t.lots * 100;
+        } else {
+          t.currentPrice = currentAsk;
+          t.profit = (t.openPrice - currentAsk) * t.lots * 100;
+        }
+      });
+      renderOpenTrades();
+      updateAccountDisplays();
+
+      if (chg >= 0) {
+        chgBadge.className = "px-2.5 py-1 rounded-lg text-xs font-bold font-mono bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1";
+        arrowEl.innerText = "▲";
+        chgEl.innerText = "+" + chg.toFixed(2) + "%";
+      } else {
+        chgBadge.className = "px-2.5 py-1 rounded-lg text-xs font-bold font-mono bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1";
+        arrowEl.innerText = "▼";
+        chgEl.innerText = chg.toFixed(2) + "%";
+      }
+
+      document.getElementById('gold-high').innerText = high.toFixed(2);
+      document.getElementById('gold-low').innerText = low.toFixed(2);
+      const range = high - low;
+      document.getElementById('gold-range').innerText = range.toFixed(2);
+
+      if (range > 0) {
+        const pct = Math.max(0, Math.min(100, ((current - low) / range) * 100));
+        document.getElementById('range-fill').style.width = pct.toFixed(1) + "%";
+      }
+
+      const r1Val = parseFloat(document.getElementById('val-r1').innerText.replace('$', ''));
+      const s1Val = parseFloat(document.getElementById('val-s1').innerText.replace('$', ''));
+      if (!isNaN(r1Val)) {
+        document.getElementById('dist-r1').innerText = (r1Val - current).toFixed(2);
+      }
+      if (!isNaN(s1Val)) {
+        document.getElementById('dist-s1').innerText = (current - s1Val).toFixed(2);
+      }
+    }
+
+    async function fetchData() {
+      try {
+        let resp = await fetch('/api/data');
+        if (!resp.ok) {
+          resp = await fetch('./data.json');
+        }
+        if (resp.ok) {
+          globalData = await resp.json();
+          renderData(globalData);
+        }
+      } catch (e) {
+        try {
+          const resp = await fetch('./data.json');
+          if (resp.ok) {
+            globalData = await resp.json();
+            renderData(globalData);
+          }
+        } catch (err) {
+          console.log('Erro ao carregar dados:', err);
+        }
+      }
+    }
+
+    function renderData(data) {
+      if (!data) return;
+
+      if (data.price_data && data.price_data.price) {
+        const p = data.price_data;
+        updateLivePriceDisplay(p.price, p.high, p.low, p.open, p.change_percent, p.source);
+        if (p.spread) {
+          document.getElementById('gold-spread').innerText = (p.spread / 10).toFixed(1);
+        }
+        if (p.open) {
+          document.getElementById('gold-open').innerText = p.open.toFixed(2);
+        }
+      }
+
+      renderPivots();
+
+      if (data.account) {
+        if (data.account.login) document.getElementById("acc-login-id").innerText = data.account.login;
+        if (data.account.server) document.getElementById("acc-server-name").innerText = data.account.server;
+        if (data.account.company) document.getElementById("acc-broker-name").innerText = data.account.company;
+        if (data.account.balance) {
+          accountBalance = parseFloat(data.account.balance);
+          updateAccountDisplays();
+        }
+      }
+
+      if (data.projections) {
+        const pr = data.projections;
+        if (pr.daily) {
+          document.getElementById('proj-day-bias').innerText = pr.daily.bias;
+          document.getElementById('proj-day-bull').innerText = pr.daily.target_bull;
+          document.getElementById('proj-day-bear').innerText = pr.daily.target_bear;
+          document.getElementById('proj-day-adr').innerText = pr.daily.adr;
+          document.getElementById('proj-day-desc').innerText = pr.daily.summary;
+        }
+        if (pr.weekly) {
+          document.getElementById('proj-week-res').innerText = pr.weekly.resistance_week;
+          document.getElementById('proj-week-sup').innerText = pr.weekly.support_week;
+        }
+      }
+
+      renderCalendar();
+      renderNews();
+      updateNextEventCountdown();
+    }
+
+    function switchPivot(type) {
+      currentPivotType = type;
+      const btnC = document.getElementById('btn-pivot-classic');
+      const btnF = document.getElementById('btn-pivot-fib');
+      if (type === 'classic') {
+        btnC.className = "px-3.5 py-1.5 text-xs rounded-xl bg-amber-500 text-slate-950 font-bold transition shadow-xs";
+        btnF.className = "px-3.5 py-1.5 text-xs rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition";
+      } else {
+        btnF.className = "px-3.5 py-1.5 text-xs rounded-xl bg-amber-500 text-slate-950 font-bold transition shadow-xs";
+        btnC.className = "px-3.5 py-1.5 text-xs rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition";
+      }
+      renderPivots();
+
+      if (data.account) {
+        if (data.account.login) document.getElementById("acc-login-id").innerText = data.account.login;
+        if (data.account.server) document.getElementById("acc-server-name").innerText = data.account.server;
+        if (data.account.company) document.getElementById("acc-broker-name").innerText = data.account.company;
+        if (data.account.balance) {
+          accountBalance = parseFloat(data.account.balance);
+          updateAccountDisplays();
+        }
+      }
+    }
+
+    function renderPivots() {
+      if (!globalData || !globalData.tech_levels) return;
+      const piv = currentPivotType === 'classic' 
+        ? globalData.tech_levels.pivot_classic 
+        : globalData.tech_levels.pivot_fibonacci;
+
+      if (!piv) return;
+      document.getElementById('val-s3').innerText = '$' + piv.S3;
+      document.getElementById('val-s2').innerText = '$' + piv.S2;
+      document.getElementById('val-s1').innerText = '$' + piv.S1;
+      document.getElementById('val-pp').innerText = '$' + piv.PP;
+      document.getElementById('val-r1').innerText = '$' + piv.R1;
+      document.getElementById('val-r2').innerText = '$' + piv.R2;
+      document.getElementById('val-r3').innerText = '$' + piv.R3;
+    }
+
+    function filterCalendar(bulls) {
+      currentFilterBulls = bulls;
+      ['all', 3, 2, 1].forEach(b => {
+        const btn = document.getElementById('btn-filter-' + b);
+        if (btn) {
+          if (b === bulls) {
+            btn.className = "px-3 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold shadow-xs";
+          } else {
+            btn.className = "px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200";
+          }
+        }
+      });
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const container = document.getElementById('calendar-list');
+      if (!globalData || !globalData.calendar || globalData.calendar.length === 0) {
+        container.innerHTML = '<div class="text-center py-10 text-slate-400 text-xs">Nenhum evento econômico listado.</div>';
+        return;
+      }
+
+      let events = globalData.calendar;
+      if (currentFilterBulls !== 'all') {
+        events = events.filter(e => e.bulls === currentFilterBulls);
+      }
+
+      if (events.length === 0) {
+        container.innerHTML = '<div class="text-center py-10 text-slate-400 text-xs">Nenhum evento com esse filtro no período.</div>';
+        return;
+      }
+
+      let html = '';
+      events.forEach(ev => {
+        let bullIcon = '';
+        if (ev.bulls === 3) bullIcon = '<span class="text-rose-600 font-bold text-sm" title="3 Touros - Alto Impacto">🐂🐂🐂</span>';
+        else if (ev.bulls === 2) bullIcon = '<span class="text-amber-600 font-bold text-sm" title="2 Touros - Médio Impacto">🐂🐂</span>';
+        else if (ev.bulls === 1) bullIcon = '<span class="text-yellow-600 font-bold text-sm" title="1 Touro - Baixo Impacto">🐂</span>';
+
+        let badgeBg = ev.bulls === 3 ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                      ev.bulls === 2 ? 'bg-amber-50 text-amber-800 border-amber-200' :
+                      'bg-slate-50 text-slate-700 border-slate-200';
+
+        let evTime = ev.date ? new Date(ev.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+        let evDay = ev.date ? new Date(ev.date).toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit' }) : '';
+
+        html += `
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/70 hover:bg-slate-100/70 transition space-y-2">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded text-xs font-mono font-bold ${badgeBg} border">
+                  ${ev.currency}
+                </span>
+                <span class="text-xs font-mono text-slate-700 font-semibold">${evDay} às ${evTime}</span>
+                <span class="text-xs">${bullIcon}</span>
+              </div>
+              <div class="text-[11px] font-mono text-slate-500">
+                Prev: <span class="text-slate-800 font-semibold">${ev.forecast}</span> | Ant: <span class="text-slate-800">${ev.previous}</span>
+              </div>
+            </div>
+            <div class="font-bold text-xs text-slate-900">${ev.title}</div>
+            <div class="text-[11px] text-amber-900 bg-amber-50/90 p-2.5 rounded-lg border border-amber-200 leading-relaxed font-sans">
+              💡 <strong>Impacto no Ouro:</strong> ${ev.gold_impact}
+            </div>
+            ${ev.scenario_above || ev.scenario_below ? `
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] font-sans pt-1">
+                <div class="p-2 rounded bg-rose-50/70 border border-rose-200 text-rose-900 leading-snug">
+                  <strong>🔺 Se vier acima (Forte):</strong> ${ev.scenario_above}
+                </div>
+                <div class="p-2 rounded bg-emerald-50/70 border border-emerald-200 text-emerald-900 leading-snug">
+                  <strong>🔻 Se vier abaixo (Fraco):</strong> ${ev.scenario_below}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function renderNews() {
+      const container = document.getElementById('news-list');
+      if (!globalData || !globalData.news || globalData.news.length === 0) {
+        container.innerHTML = '<div class="text-center py-10 text-slate-400 text-xs">Nenhuma notícia capturada no momento.</div>';
+        return;
+      }
+
+      let html = '';
+      globalData.news.forEach(item => {
+        let tagBg = item.color === 'emerald' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                    item.color === 'rose' ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                    item.color === 'amber' ? 'bg-amber-50 text-amber-800 border-amber-200' :
+                    'bg-slate-100 text-slate-700 border-slate-200';
+
+        html += `
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/70 hover:bg-slate-100/70 transition flex flex-col justify-between space-y-2.5 shadow-2xs">
+            <div>
+              <div class="flex flex-wrap items-center justify-between text-[11px] text-slate-500 mb-1.5 gap-2">
+                <div class="flex items-center gap-1.5">
+                  <span class="font-mono font-bold text-amber-800 flex items-center gap-1">
+                    <span>🏛️</span> ${item.portal}
+                  </span>
+                  ${item.category ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-200/70 text-slate-700 font-sans">${item.category}</span>` : ''}
+                </div>
+                <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold font-mono border ${tagBg}">${item.sentiment}</span>
+              </div>
+
+              <a href="${item.link}" target="_blank" class="font-bold text-xs text-slate-900 hover:text-amber-700 transition leading-snug block mb-2">
+                ${item.title}
+              </a>
+
+              <!-- COMENTÁRIO PROSPECTIVO: O QUE PODE ACONTECER -->
+              <div class="p-3 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-slate-800 space-y-1.5 font-sans">
+                <div class="flex items-center gap-1.5 font-bold text-amber-900 text-[11px]">
+                  <span>🔮</span> <strong>O que pode acontecer no Ouro:</strong>
+                </div>
+                <p class="leading-relaxed text-slate-700 text-xs">
+                  ${item.what_to_expect || "Acompanhamento macroeconômico institucional. Monitorar o comportamento em torno do pivô central e níveis técnicos."}
+                </p>
+                ${item.trigger ? `
+                  <div class="pt-1.5 border-t border-amber-200/60 text-[11px] text-slate-600 font-mono flex items-center gap-1.5">
+                    <span class="text-amber-800 font-bold">🎯 Gatilho Técnico:</span> ${item.trigger}
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono pt-1 border-t border-slate-100">
+              <span>Publicado: ${item.pubDate}</span>
+              <span class="text-amber-700 font-sans font-semibold">Fonte Verificada ↗</span>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function updateNextEventCountdown() {
+      if (!globalData || !globalData.calendar) return;
+      const now = new Date();
+      const upcoming = globalData.calendar
+        .filter(e => e.bulls === 3 && e.date && new Date(e.date) > now)
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      if (upcoming.length > 0) {
+        const next = upcoming[0];
+        document.getElementById('next-event-title').innerText = `${next.currency}: ${next.title}`;
+        
+        function tickCountdown() {
+          const diffMs = new Date(next.date) - new Date();
+          if (diffMs <= 0) {
+            document.getElementById('countdown-timer').innerText = "PUBLICADO AGORA";
+            return;
+          }
+          const hours = Math.floor(diffMs / (1000 * 60 * 60));
+          const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+          const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+          document.getElementById('countdown-timer').innerText = 
+            `${String(hours).padStart(2, '0')}h ${String(mins).padStart(2, '0')}m ${String(secs).padStart(2, '0')}s`;
+        }
+        tickCountdown();
+        setInterval(tickCountdown, 1000);
+      } else {
+        document.getElementById('next-event-title').innerText = "Todos os eventos de 3 touros de hoje foram concluídos";
+        document.getElementById('countdown-timer').innerText = "CALENDÁRIO LIMPO";
+      }
+    }
+
+    
+    // ==========================================
+    // MÓDULO DE NEGOCIAÇÃO & CORRETORA (XM / MT5)
+    // ==========================================
+    let currentOrderType = "market";
+    let openTrades = [];
+    let accountBalance = 76.01;
+
+    function openBrokerModal() {
+      document.getElementById("broker-modal").classList.remove("hidden");
+    }
+    function closeBrokerModal() {
+      document.getElementById("broker-modal").classList.add("hidden");
+    }
+    function saveBrokerConnection() {
+      const broker = document.getElementById("modal-broker").value;
+      const server = document.getElementById("modal-server").value;
+      const login = document.getElementById("modal-login").value;
+      const leverage = document.getElementById("modal-leverage").value;
+      const type = document.getElementById("modal-type").value;
+
+      document.getElementById("acc-broker-name").innerText = broker;
+      document.getElementById("acc-server-name").innerText = server;
+      document.getElementById("acc-login-id").innerText = login;
+      document.getElementById("acc-leverage").innerText = leverage;
+
+      const statusBadge = document.getElementById("acc-status-badge");
+      if (type === "simulation") {
+        statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500 live-dot"></span><span>Simulação / Demo</span>';
+        statusBadge.className = "font-mono text-xs px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1.5 font-bold";
+      } else {
+        statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span><span>Conectado MT5</span>';
+        statusBadge.className = "font-mono text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 font-bold";
+      }
+
+      showTradeToast(`Conta ${login} configurada com sucesso!`, "success");
+      closeBrokerModal();
+    }
+
+    function setOrderType(type) {
+      currentOrderType = type;
+      const btnM = document.getElementById("btn-ordertype-market");
+      const btnL = document.getElementById("btn-ordertype-limit");
+      if (type === "market") {
+        btnM.className = "py-2 rounded-xl bg-amber-500 text-slate-950 shadow-xs";
+        btnL.className = "py-2 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200";
+      } else {
+        btnL.className = "py-2 rounded-xl bg-amber-500 text-slate-950 shadow-xs";
+        btnM.className = "py-2 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200";
+      }
+    }
+
+    function adjustLot(delta) {
+      const el = document.getElementById("trade-lots");
+      let val = Math.max(0.01, Math.min(10.0, parseFloat(el.value || 0.01) + delta));
+      el.value = val.toFixed(2);
+    }
+
+    function setLot(val) {
+      document.getElementById("trade-lots").value = val.toFixed(2);
+    }
+
+    function setSLtoPivot(level) {
+      const el = document.getElementById("val-" + level.toLowerCase());
+      if (el) {
+        const price = parseFloat(el.innerText.replace("$", ""));
+        if (!isNaN(price)) {
+          document.getElementById("trade-sl").value = price.toFixed(2);
+        }
+      }
+    }
+
+    function setTPtoPivot(level) {
+      const el = document.getElementById("val-" + level.toLowerCase());
+      if (el) {
+        const price = parseFloat(el.innerText.replace("$", ""));
+        if (!isNaN(price)) {
+          document.getElementById("trade-tp").value = price.toFixed(2);
+        }
+      }
+    }
+
+    function executeTrade(direction) {
+      const lots = parseFloat(document.getElementById("trade-lots").value) || 0.01;
+      const bid = parseFloat(document.getElementById("ticket-bid").innerText) || lastPrice;
+      const ask = parseFloat(document.getElementById("ticket-ask").innerText) || (lastPrice + 0.24);
+      const entryPrice = direction === "BUY" ? ask : bid;
+      const sl = parseFloat(document.getElementById("trade-sl").value) || 0;
+      const tp = parseFloat(document.getElementById("trade-tp").value) || 0;
+
+      const ticketId = Math.floor(10000000 + Math.random() * 90000000);
+      const newTrade = {
+        ticket: ticketId,
+        direction: direction,
+        symbol: "GOLD#",
+        lots: lots,
+        openPrice: entryPrice,
+        currentPrice: entryPrice,
+        sl: sl,
+        tp: tp,
+        time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+        profit: 0.00
+      };
+
+      openTrades.unshift(newTrade);
+      renderOpenTrades();
+      showTradeToast(`Ordem ${direction} #${ticketId} aberta a $${entryPrice.toFixed(2)} (${lots} lotes)`, "success");
+    }
+
+    function closeTrade(ticket) {
+      const idx = openTrades.findIndex(t => t.ticket === ticket);
+      if (idx !== -1) {
+        const t = openTrades[idx];
+        accountBalance += t.profit;
+        openTrades.splice(idx, 1);
+        renderOpenTrades();
+        updateAccountDisplays();
+        showTradeToast(`Ordem #${ticket} encerrada. Resultado: ${t.profit >= 0 ? "+" : ""}$${t.profit.toFixed(2)} USD`, t.profit >= 0 ? "success" : "warn");
+      }
+    }
+
+    function breakEvenTrade(ticket) {
+      const t = openTrades.find(t => t.ticket === ticket);
+      if (t) {
+        t.sl = t.openPrice;
+        renderOpenTrades();
+        showTradeToast(`Ordem #${ticket}: Stop Loss movido para a entrada ($${t.openPrice.toFixed(2)})`, "info");
+      }
+    }
+
+    function renderOpenTrades() {
+      const container = document.getElementById("open-positions-list");
+      const countEl = document.getElementById("open-trades-count");
+      if (countEl) countEl.innerText = openTrades.length;
+
+      if (!container) return;
+      if (openTrades.length === 0) {
+        container.innerHTML = '<div class="text-center py-6 text-slate-400 text-xs">Nenhuma ordem aberta no momento.</div>';
+        return;
+      }
+
+      let html = "";
+      openTrades.forEach(t => {
+        const isBuy = t.direction === "BUY";
+        const dirClass = isBuy ? "bg-emerald-50 text-emerald-800 border-emerald-200" : "bg-rose-50 text-rose-800 border-rose-200";
+        const pnlClass = t.profit >= 0 ? "text-emerald-700 font-bold" : "text-rose-700 font-bold";
+
+        html += `
+          <div class="border border-slate-200 rounded-xl p-3 bg-slate-50/70 hover:bg-slate-100/70 transition space-y-2 text-xs">
+            <div class="flex items-center justify-between font-mono">
+              <div class="flex items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded font-black text-[10px] border ${dirClass}">${t.direction}</span>
+                <span class="font-bold text-slate-800">${t.symbol}</span>
+                <span class="text-slate-500 font-semibold">${t.lots.toFixed(2)} l</span>
+              </div>
+              <div class="${pnlClass} text-sm">
+                ${t.profit >= 0 ? "+" : ""}$${t.profit.toFixed(2)}
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center text-[11px] font-mono text-slate-500 pt-1 border-t border-slate-200/60">
+              <div>Entrada: <strong class="text-slate-700">$${t.openPrice.toFixed(2)}</strong></div>
+              <div>Atual: <strong class="text-slate-700">$${t.currentPrice.toFixed(2)}</strong></div>
+            </div>
+
+            <div class="flex justify-between items-center pt-1">
+              <div class="text-[10px] font-mono text-slate-400">
+                ${t.sl ? `SL: $${t.sl.toFixed(2)}` : "Sem SL"} • ${t.tp ? `TP: $${t.tp.toFixed(2)}` : "Sem TP"}
+              </div>
+              <div class="flex gap-1.5">
+                <button type="button" onclick="breakEvenTrade(${t.ticket})" class="px-2 py-1 text-[10px] font-mono rounded bg-white hover:bg-slate-100 border border-slate-200 text-slate-700" title="Mover SL para entrada">🛡️ BE</button>
+                <button type="button" onclick="closeTrade(${t.ticket})" class="px-2.5 py-1 text-[10px] font-mono font-bold rounded bg-rose-500 hover:bg-rose-600 text-white shadow-xs">Fechar</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function updateAccountDisplays() {
+      let totalFloating = 0;
+      openTrades.forEach(t => totalFloating += t.profit);
+
+      const balEl = document.getElementById("acc-balance-display");
+      if (balEl) balEl.innerText = "$" + accountBalance.toFixed(2);
+
+      const equity = accountBalance + totalFloating;
+      const equityEl = document.getElementById("acc-equity-display");
+      if (equityEl) equityEl.innerText = "$" + equity.toFixed(2);
+
+      const pnlEl = document.getElementById("acc-floating-pnl");
+      if (pnlEl) {
+        if (totalFloating >= 0) {
+          pnlEl.innerText = "+$" + totalFloating.toFixed(2);
+          pnlEl.className = "text-base font-bold text-emerald-700";
+        } else {
+          pnlEl.innerText = "-$" + Math.abs(totalFloating).toFixed(2);
+          pnlEl.className = "text-base font-bold text-rose-700";
+        }
+      }
+    }
+
+    function showTradeToast(msg, type) {
+      const el = document.getElementById("trade-toast");
+      if (!el) return;
+      el.className = type === "success" 
+        ? "p-3 rounded-xl text-xs font-mono bg-emerald-50 border border-emerald-200 text-emerald-800" 
+        : type === "warn" 
+        ? "p-3 rounded-xl text-xs font-mono bg-rose-50 border border-rose-200 text-rose-800"
+        : "p-3 rounded-xl text-xs font-mono bg-sky-50 border border-sky-200 text-sky-800";
+      el.innerText = msg;
+      el.classList.remove("hidden");
+      setTimeout(() => {
+        el.classList.add("hidden");
+      }, 4000);
+    }
+
+    connectBinanceWS();
+    fetchData();
+    setInterval(fetchData, 15000);
+  </script>
+
+  <!-- MODAL DE LOGIN / CONEXÃO COM A CORRETORA -->
+  <div id="broker-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 border border-slate-200 shadow-2xl space-y-5 animate-scale-up">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🔑</span>
+          <h3 class="font-bold text-slate-900 text-base">Conectar Corretora (XM / MT5)</h3>
+        </div>
+        <button onclick="closeBrokerModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
+      </div>
+
+      <div class="space-y-4 text-xs font-medium text-slate-700">
+        <div>
+          <label class="block mb-1 text-slate-600">Corretora:</label>
+          <select id="modal-broker" class="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white font-mono text-xs focus:outline-none focus:border-amber-500">
+            <option value="XM Global Limited" selected>XM Global Limited</option>
+            <option value="IC Markets">IC Markets</option>
+            <option value="Exness">Exness</option>
+            <option value="Pepperstone">Pepperstone</option>
+            <option value="Outra Corretora">Outro Servidor MT5</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block mb-1 text-slate-600">Servidor MT5:</label>
+          <input type="text" id="modal-server" value="XMGlobal-MT5 4" class="w-full h-10 px-3 rounded-xl border border-slate-200 font-mono text-xs focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block mb-1 text-slate-600">Conta / Login:</label>
+            <input type="text" id="modal-login" value="89119725" class="w-full h-10 px-3 rounded-xl border border-slate-200 font-mono text-xs focus:outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="block mb-1 text-slate-600">Alavancagem:</label>
+            <input type="text" id="modal-leverage" value="1:500" class="w-full h-10 px-3 rounded-xl border border-slate-200 font-mono text-xs focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block mb-1 text-slate-600">Modo de Operação:</label>
+          <select id="modal-type" class="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white font-mono text-xs focus:outline-none focus:border-amber-500">
+            <option value="mt5_bridge" selected>Ponte Local MetaTrader 5 (ClaudeBridge Real)</option>
+            <option value="simulation">Modo Treinamento / Paper Trading (Simulado)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
+        <button onclick="closeBrokerModal()" class="px-4 py-2 text-xs rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition">Cancelar</button>
+        <button onclick="saveBrokerConnection()" class="px-5 py-2 text-xs rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black shadow-xs transition">Salvar & Conectar</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
